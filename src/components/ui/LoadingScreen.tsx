@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { useSceneStore } from '@/store/sceneStore'
 import { soundSystem } from '@/lib/sound'
@@ -10,227 +10,214 @@ const LINE2 = 'Estás por despegar.'
 
 export function LoadingScreen() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const lineRef = useRef<HTMLDivElement>(null)
-  const text1Ref = useRef<HTMLParagraphElement>(null)
-  const text2Ref = useRef<HTMLParagraphElement>(null)
-  const enterRef = useRef<HTMLButtonElement>(null)
+  const topRef       = useRef<HTMLDivElement>(null)
+  const botRef       = useRef<HTMLDivElement>(null)
+  const lineRef      = useRef<HTMLDivElement>(null)
+  const text1Ref     = useRef<HTMLParagraphElement>(null)
+  const text2Ref     = useRef<HTMLParagraphElement>(null)
 
-  const [phase, setPhase] = useState<'idle' | 'line' | 'text1' | 'text2' | 'enter' | 'done'>('idle')
   const { setIsEntered } = useSceneStore()
 
-  // Animate characters one by one
-  const revealText = (el: HTMLElement, text: string, onDone?: () => void) => {
+  const revealChars = (el: HTMLElement, text: string) => {
     el.innerHTML = text
       .split('')
       .map((c, i) =>
         c === ' '
-          ? `<span style="display:inline-block; width:0.3em">&nbsp;</span>`
-          : `<span class="char" style="animation-delay:${i * 55}ms">${c}</span>`
+          ? `<span style="display:inline-block;width:0.3em">&nbsp;</span>`
+          : `<span style="display:inline-block;opacity:0;animation:char-reveal 0.4s ease-out ${i * 58}ms forwards">${c}</span>`
       )
       .join('')
-    const duration = text.length * 55 + 500
-    setTimeout(() => onDone?.(), duration)
   }
 
   useEffect(() => {
-    const tl = gsap.timeline({ delay: 0.6 })
+    // Prevent accidental scroll during intro
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
 
-    // Phase 1: line expands
-    tl.to(lineRef.current, {
-      scaleX: 1,
-      duration: 1.8,
-      ease: 'power3.inOut',
-      onStart: () => setPhase('line'),
-    })
-
-    // Phase 2: first text
-    tl.add(() => {
-      setPhase('text1')
-      if (text1Ref.current) {
-        gsap.to(text1Ref.current, { opacity: 1, duration: 0.3 })
-        revealText(text1Ref.current, LINE1, () => {
-          // Phase 3: pause then fade out text1, show text2
-          gsap.to(text1Ref.current!, {
-            opacity: 0,
-            duration: 0.6,
-            delay: 1,
-            onComplete: () => {
-              setPhase('text2')
-              if (text2Ref.current) {
-                gsap.to(text2Ref.current, { opacity: 1, duration: 0.3 })
-                revealText(text2Ref.current, LINE2, () => {
-                  // Phase 4: show enter button
-                  setTimeout(() => setPhase('enter'), 800)
-                })
-              }
-            },
-          })
-        })
-      }
-    }, '+=0.3')
-
-    return () => { tl.kill() }
-  }, [])
-
-  // Show enter button when phase is 'enter'
-  useEffect(() => {
-    if (phase === 'enter' && enterRef.current) {
-      gsap.to(enterRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'power2.out',
-      })
+    // Audio: unlock on first user gesture
+    const unlock = async () => {
+      try {
+        await soundSystem.init()
+        soundSystem.unmute()
+        useSceneStore.getState().toggleSound()
+      } catch (_) { /* browser may block */ }
     }
-  }, [phase])
+    document.addEventListener('mousemove',  unlock, { once: true, passive: true })
+    document.addEventListener('touchstart', unlock, { once: true, passive: true })
+    document.addEventListener('click',      unlock, { once: true })
 
-  const handleEnter = async () => {
-    setPhase('done')
+    const tl = gsap.timeline({ delay: 0.4 })
 
-    await soundSystem.init()
-    soundSystem.unmute()
-    useSceneStore.getState().toggleSound()
+    // ── 1. Light ribbon expands from center ──────────────────────────────────
+    tl.fromTo(
+      lineRef.current,
+      { scaleX: 0, opacity: 0 },
+      { scaleX: 1, opacity: 1, duration: 1.9, ease: 'power3.inOut' }
+    )
 
-    gsap.to(containerRef.current, {
-      opacity: 0,
-      duration: 1.4,
-      ease: 'power2.inOut',
-      onComplete: () => {
-        setIsEntered(true)
-        if (containerRef.current) {
-          containerRef.current.style.display = 'none'
-        }
+    // ── 2. First text appears character by character ──────────────────────────
+    tl.fromTo(
+      text1Ref.current,
+      { opacity: 0 },
+      {
+        opacity: 1,
+        duration: 0.15,
+        onComplete: () => { if (text1Ref.current) revealChars(text1Ref.current, LINE1) },
       },
+      '+=0.35'
+    )
+
+    // ── 3. Fade out first text ────────────────────────────────────────────────
+    tl.to(text1Ref.current, { opacity: 0, duration: 0.55, ease: 'power2.in' }, '+=2.1')
+
+    // ── 4. Second text ────────────────────────────────────────────────────────
+    tl.fromTo(
+      text2Ref.current,
+      { opacity: 0 },
+      {
+        opacity: 1,
+        duration: 0.15,
+        onComplete: () => { if (text2Ref.current) revealChars(text2Ref.current, LINE2) },
+      },
+      '+=0.25'
+    )
+
+    // ── 5. Fade out second text ───────────────────────────────────────────────
+    tl.to(text2Ref.current, { opacity: 0, duration: 0.55, ease: 'power2.in' }, '+=1.9')
+
+    // ── 6. Ribbon intensifies — the door is about to open ────────────────────
+    tl.to(
+      lineRef.current,
+      {
+        boxShadow: '0 0 30px rgba(240,237,232,0.95), 0 0 80px rgba(240,237,232,0.4), 0 0 180px rgba(240,237,232,0.18)',
+        height: '2px',
+        duration: 0.8,
+        ease: 'power2.inOut',
+      },
+      '+=0.35'
+    )
+
+    // ── 7. THE SPLIT — smooth automatic open ─────────────────────────────────
+    tl.to(topRef.current, { yPercent: -100, duration: 1.6, ease: 'power4.inOut' }, '+=0.15')
+    tl.to(botRef.current, { yPercent:  100, duration: 1.6, ease: 'power4.inOut' }, '<')
+    tl.to(lineRef.current, { opacity: 0, duration: 0.5 }, '<+=0.5')
+
+    // ── 8. Done ───────────────────────────────────────────────────────────────
+    tl.add(() => {
+      document.body.style.overflow = prev || ''
+      setIsEntered(true)
+      if (containerRef.current) containerRef.current.style.display = 'none'
     })
-  }
+
+    return () => {
+      tl.kill()
+      document.body.style.overflow = prev || ''
+      document.removeEventListener('mousemove',  unlock)
+      document.removeEventListener('touchstart', unlock)
+      document.removeEventListener('click',      unlock)
+    }
+  }, [setIsEntered])
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 1000,
-        background: '#050505',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '3rem',
-      }}
-    >
-      {/* Thin light ribbon */}
+    <div ref={containerRef} style={{ position: 'fixed', inset: 0, zIndex: 1000 }}>
+
+      {/* ── Top panel ─────────────────────────────────────────────────────── */}
       <div
-        ref={lineRef}
+        ref={topRef}
         style={{
-          width: '40vw',
-          height: '1px',
-          background:
-            'linear-gradient(90deg, transparent, rgba(240,237,232,0.8) 50%, transparent)',
-          transformOrigin: 'center',
-          transform: 'scaleX(0)',
           position: 'absolute',
-          top: '50%',
-          left: '50%',
-          translate: '-50% -50%',
-          boxShadow: '0 0 20px rgba(240,237,232,0.3), 0 0 60px rgba(240,237,232,0.1)',
+          top: 0, left: 0, right: 0,
+          height: '50%',
+          background: '#050505',
+          zIndex: 2,
+          transformOrigin: 'top center',
         }}
       />
 
-      {/* Text container */}
+      {/* ── Bottom panel ──────────────────────────────────────────────────── */}
       <div
+        ref={botRef}
+        style={{
+          position: 'absolute',
+          bottom: 0, left: 0, right: 0,
+          height: '50%',
+          background: '#050505',
+          zIndex: 2,
+          transformOrigin: 'bottom center',
+        }}
+      />
+
+      {/* ── Light ribbon at the seam ──────────────────────────────────────── */}
+      <div
+        ref={lineRef}
         style={{
           position: 'absolute',
           top: '50%',
-          left: '50%',
-          translate: '-50% calc(-50% + 4rem)',
-          textAlign: 'center',
-          minHeight: '3rem',
+          left: '8%',
+          right: '8%',
+          height: '1px',
+          background:
+            'linear-gradient(90deg, transparent, rgba(240,237,232,0.9) 12%, rgba(240,237,232,0.9) 88%, transparent)',
+          transformOrigin: 'center',
+          transform: 'scaleX(0)',
+          opacity: 0,
+          boxShadow: '0 0 18px rgba(240,237,232,0.5), 0 0 55px rgba(240,237,232,0.2)',
+          zIndex: 3,
         }}
-      >
-        <p
-          ref={text1Ref}
-          style={{
-            fontFamily: 'var(--font-cormorant), Georgia, serif',
-            fontStyle: 'italic',
-            fontSize: 'clamp(1.1rem, 2.5vw, 1.6rem)',
-            fontWeight: 300,
-            color: 'rgba(240,237,232,0.85)',
-            letterSpacing: '0.02em',
-            opacity: 0,
-          }}
-        />
-        <p
-          ref={text2Ref}
-          style={{
-            fontFamily: 'var(--font-cormorant), Georgia, serif',
-            fontStyle: 'italic',
-            fontSize: 'clamp(1.1rem, 2.5vw, 1.6rem)',
-            fontWeight: 300,
-            color: 'rgba(240,237,232,0.85)',
-            letterSpacing: '0.02em',
-            opacity: 0,
-            position: 'absolute',
-            top: 0,
-            left: '50%',
-            translate: '-50% 0',
-            whiteSpace: 'nowrap',
-          }}
-        />
-      </div>
+      />
 
-      {/* Enter button */}
-      <button
-        ref={enterRef}
-        onClick={handleEnter}
+      {/* ── Texts — centered, above both panels ───────────────────────────── */}
+      <div
         style={{
           position: 'absolute',
-          bottom: '12vh',
+          top: 'calc(50% - 1.5rem)',
           left: '50%',
-          translate: '-50% 0',
-          opacity: 0,
-          transform: 'translateY(20px)',
-          background: 'transparent',
-          border: '1px solid rgba(240,237,232,0.2)',
-          color: 'rgba(240,237,232,0.6)',
-          padding: '0.9rem 2.8rem',
-          fontSize: '0.65rem',
-          letterSpacing: '0.3em',
-          textTransform: 'uppercase',
-          cursor: 'none',
-          transition: 'border-color 0.3s ease, color 0.3s ease',
-          fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
-        }}
-        onMouseEnter={(e) => {
-          ;(e.target as HTMLButtonElement).style.borderColor = 'rgba(240,237,232,0.6)'
-          ;(e.target as HTMLButtonElement).style.color = 'rgba(240,237,232,0.95)'
-        }}
-        onMouseLeave={(e) => {
-          ;(e.target as HTMLButtonElement).style.borderColor = 'rgba(240,237,232,0.2)'
-          ;(e.target as HTMLButtonElement).style.color = 'rgba(240,237,232,0.6)'
+          transform: 'translateX(-50%)',
+          zIndex: 4,
+          textAlign: 'center',
+          pointerEvents: 'none',
         }}
       >
-        Embarcar
-      </button>
+        {[text1Ref, text2Ref].map((ref, idx) => (
+          <p
+            key={idx}
+            ref={ref}
+            style={{
+              fontFamily: 'var(--font-cormorant), Georgia, serif',
+              fontStyle: 'italic',
+              fontSize: 'clamp(1.05rem, 2.4vw, 1.55rem)',
+              fontWeight: 300,
+              color: 'rgba(240,237,232,0.88)',
+              letterSpacing: '0.025em',
+              opacity: 0,
+              position: 'absolute',
+              top: 0,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              whiteSpace: 'nowrap',
+            }}
+          />
+        ))}
+      </div>
 
-      {/* Stage label */}
-      {phase !== 'done' && (
-        <span
-          style={{
-            position: 'absolute',
-            bottom: '3vh',
-            left: '50%',
-            translate: '-50% 0',
-            fontSize: '0.55rem',
-            letterSpacing: '0.25em',
-            textTransform: 'uppercase',
-            color: 'rgba(240,237,232,0.15)',
-            fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
-          }}
-        >
-          NEGR0CALDERON
-        </span>
-      )}
+      {/* ── Brand watermark ───────────────────────────────────────────────── */}
+      <span
+        style={{
+          position: 'absolute',
+          bottom: '3vh',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          fontSize: '0.54rem',
+          letterSpacing: '0.26em',
+          textTransform: 'uppercase',
+          color: 'rgba(240,237,232,0.11)',
+          fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
+          zIndex: 4,
+          pointerEvents: 'none',
+        }}
+      >
+        NEGR0CALDERON
+      </span>
     </div>
   )
 }
