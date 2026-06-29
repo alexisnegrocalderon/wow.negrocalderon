@@ -2,6 +2,7 @@
 
 import { Canvas } from '@react-three/fiber'
 import { ParticleSystem } from './ParticleSystem'
+import { SkyPlane } from './SkyPlane'
 import { Suspense } from 'react'
 
 export default function MainCanvas() {
@@ -16,12 +17,7 @@ export default function MainCanvas() {
       }}
     >
       <Canvas
-        camera={{
-          fov: 60,
-          near: 0.05,
-          far: 120,
-          position: [0, 0, 5],
-        }}
+        camera={{ fov: 60, near: 0.05, far: 120, position: [0, 0, 5] }}
         gl={{
           antialias: false,
           alpha: false,
@@ -30,10 +26,16 @@ export default function MainCanvas() {
           depth: false,
         }}
         dpr={[1, typeof window !== 'undefined' ? Math.min(window.devicePixelRatio, 2) : 1]}
-        style={{ background: '#050505' }}
+        // No background color — SkyPlane fills the screen in WebGL
+        onCreated={({ gl }) => {
+          gl.setClearColor(0x050505, 1)
+        }}
         frameloop="always"
       >
-        <fog attach="fog" args={['#050505', 30, 80]} />
+        {/* Sky renders first (renderOrder=-100) */}
+        <SkyPlane />
+        {/* Fog reacts to stage darkness — will be overridden by sky anyway */}
+        <fog attach="fog" args={['#050505', 35, 90]} />
         <Suspense fallback={null}>
           <ParticleSystem />
         </Suspense>
