@@ -137,12 +137,19 @@ html { scrollbar-width: none; }
 @keyframes char-reveal {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(22px) scale(0.94);
+    filter: blur(6px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+    filter: blur(0);
   }
+}
+
+@keyframes swipe-hint {
+  0%, 100% { transform: translateX(-4px); opacity: 0.5; }
+  50% { transform: translateX(4px); opacity: 1; }
 }
 
 @keyframes glow-pulse {

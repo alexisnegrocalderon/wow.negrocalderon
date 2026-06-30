@@ -117,6 +117,24 @@ export function ServicesCarousel({ selected, onToggleSelect, isMobile }: Service
     <div>
       <div style={{ position: 'relative', height: '440px' }}>
         <div style={{ position: 'absolute', inset: 0, perspective: '1300px' }}>
+          <div
+            aria-hidden
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              width: 'min(900px, 92vw)',
+              height: '64px',
+              transform: 'translate(-50%, -50%)',
+              borderRadius: '50%',
+              border: '1px solid rgba(212,175,90,0.35)',
+              boxShadow: '0 0 40px rgba(212,175,90,0.22), 0 0 90px rgba(212,175,90,0.1)',
+              opacity: detailOpen ? 0 : 0.6,
+              transition: 'opacity 0.4s ease',
+              pointerEvents: 'none',
+              zIndex: 1,
+            }}
+          />
           <motion.div
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
@@ -216,12 +234,33 @@ export function ServicesCarousel({ selected, onToggleSelect, isMobile }: Service
         )}
       </div>
 
-      <p
-        className="label-text"
-        style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.6rem', opacity: 0.5 }}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '0.6rem',
+          marginTop: '1rem',
+        }}
       >
-        ← Desliza para explorar →
-      </p>
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="rgba(212,175,90,0.75)"
+          strokeWidth="1.3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden
+          style={{ animation: 'swipe-hint 1.8s ease-in-out infinite' }}
+        >
+          <path d="M8 12h8M8 12l3-3M8 12l3 3M16 12l-3-3M16 12l-3 3" />
+        </svg>
+        <p className="label-text" style={{ fontSize: '0.6rem', opacity: 0.6 }}>
+          Desliza para explorar
+        </p>
+      </div>
     </div>
   )
 }

@@ -23,8 +23,8 @@ export function LoadingScreen() {
       .split('')
       .map((c, i) =>
         c === ' '
-          ? `<span style="display:inline-block;width:0.3em">&nbsp;</span>`
-          : `<span style="display:inline-block;opacity:0;animation:char-reveal 0.4s ease-out ${i * 58}ms forwards">${c}</span>`
+          ? `<span style="display:inline-block;width:0.32em">&nbsp;</span>`
+          : `<span style="display:inline-block;opacity:0;animation:char-reveal 0.55s cubic-bezier(0.16,1,0.3,1) ${i * 65}ms forwards">${c}</span>`
       )
       .join('')
   }
@@ -68,7 +68,7 @@ export function LoadingScreen() {
     )
 
     // ── 3. Fade out first text ────────────────────────────────────────────────
-    tl.to(text1Ref.current, { opacity: 0, duration: 0.55, ease: 'power2.in' }, '+=2.1')
+    tl.to(text1Ref.current, { opacity: 0, duration: 0.55, ease: 'power2.in' }, '+=2.9')
 
     // ── 4. Second text ────────────────────────────────────────────────────────
     tl.fromTo(
@@ -83,7 +83,7 @@ export function LoadingScreen() {
     )
 
     // ── 5. Fade out second text ───────────────────────────────────────────────
-    tl.to(text2Ref.current, { opacity: 0, duration: 0.55, ease: 'power2.in' }, '+=1.9')
+    tl.to(text2Ref.current, { opacity: 0, duration: 0.55, ease: 'power2.in' }, '+=2.1')
 
     // ── 6. Ribbon intensifies — the door is about to open ────────────────────
     tl.to(
@@ -185,10 +185,11 @@ export function LoadingScreen() {
             style={{
               fontFamily: 'var(--font-cormorant), Georgia, serif',
               fontStyle: 'italic',
-              fontSize: 'clamp(1.05rem, 2.4vw, 1.55rem)',
+              fontSize: 'clamp(1.4rem, 5.4vw, 3.6rem)',
               fontWeight: 300,
-              color: 'rgba(240,237,232,0.88)',
-              letterSpacing: '0.025em',
+              color: 'rgba(240,237,232,0.92)',
+              letterSpacing: '0.01em',
+              textShadow: '0 6px 60px rgba(240,237,232,0.2)',
               opacity: 0,
               position: 'absolute',
               top: 0,

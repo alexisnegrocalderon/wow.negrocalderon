@@ -31,15 +31,21 @@ export function ServiceCard({ service, isSelected, isCenter, style, onClick }: S
           position: 'relative',
           width: '100%',
           height: '100%',
-          borderRadius: '12px',
+          borderRadius: '16px',
           padding: '1.25rem 1rem',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'flex-start',
           background: isCenter ? 'rgba(10,9,7,0.35)' : 'rgba(10,9,7,0.22)',
-          borderColor: isSelected ? 'rgba(212,175,90,0.7)' : undefined,
+          borderColor: isSelected
+            ? 'rgba(212,175,90,0.7)'
+            : isCenter
+            ? 'rgba(212,175,90,0.3)'
+            : 'rgba(212,175,90,0.1)',
           boxShadow: isSelected
-            ? '0 0 0 1px rgba(212,175,90,0.4), 0 20px 50px rgba(0,0,0,0.4)'
+            ? '0 0 0 1px rgba(212,175,90,0.45), 0 0 45px rgba(212,175,90,0.28), 0 20px 50px rgba(0,0,0,0.4)'
+            : isCenter
+            ? '0 0 30px rgba(212,175,90,0.14), 0 16px 40px rgba(0,0,0,0.3)'
             : '0 16px 40px rgba(0,0,0,0.3)',
           transition: 'border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease',
         }}
@@ -66,7 +72,21 @@ export function ServiceCard({ service, isSelected, isCenter, style, onClick }: S
           </span>
         )}
 
-        <ServiceIcon icon={service.icon} size={24} />
+        <div style={{ position: 'relative' }}>
+          <span
+            aria-hidden
+            style={{
+              position: 'absolute',
+              inset: '-10px',
+              background: 'radial-gradient(circle, rgba(212,175,90,0.4), transparent 70%)',
+              filter: 'blur(7px)',
+              zIndex: 0,
+            }}
+          />
+          <span style={{ position: 'relative', display: 'block', zIndex: 1 }}>
+            <ServiceIcon icon={service.icon} size={24} />
+          </span>
+        </div>
 
         <span
           style={{
