@@ -18,8 +18,8 @@ export function ServiceCard({ service, isSelected, isCenter, style, onClick }: S
       data-cursor="pointer"
       style={{
         position: 'relative',
-        width: '150px',
-        height: '190px',
+        width: '190px',
+        height: '240px',
         flexShrink: 0,
         cursor: 'none',
         ...style,
@@ -31,22 +31,26 @@ export function ServiceCard({ service, isSelected, isCenter, style, onClick }: S
           position: 'relative',
           width: '100%',
           height: '100%',
-          borderRadius: '16px',
-          padding: '1.25rem 1rem',
+          borderRadius: '20px',
+          padding: '1.5rem 1.25rem',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'flex-start',
-          background: isCenter ? 'rgba(10,9,7,0.35)' : 'rgba(10,9,7,0.22)',
+          background: isSelected
+            ? 'linear-gradient(160deg, rgba(212,175,90,0.16), rgba(10,9,7,0.3) 70%)'
+            : isCenter
+            ? 'linear-gradient(160deg, rgba(212,175,90,0.08), rgba(10,9,7,0.22) 70%)'
+            : 'linear-gradient(160deg, rgba(212,175,90,0.03), rgba(10,9,7,0.14) 70%)',
           borderColor: isSelected
             ? 'rgba(212,175,90,0.7)'
             : isCenter
             ? 'rgba(212,175,90,0.3)'
             : 'rgba(212,175,90,0.1)',
           boxShadow: isSelected
-            ? '0 0 0 1px rgba(212,175,90,0.45), 0 0 45px rgba(212,175,90,0.28), 0 20px 50px rgba(0,0,0,0.4)'
+            ? '0 0 0 1px rgba(212,175,90,0.5), 0 0 60px rgba(212,175,90,0.32), 0 25px 60px rgba(0,0,0,0.4)'
             : isCenter
-            ? '0 0 30px rgba(212,175,90,0.14), 0 16px 40px rgba(0,0,0,0.3)'
-            : '0 16px 40px rgba(0,0,0,0.3)',
+            ? '0 0 40px rgba(212,175,90,0.18), 0 20px 50px rgba(0,0,0,0.3)'
+            : '0 20px 50px rgba(0,0,0,0.3)',
           transition: 'border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease',
         }}
       >
@@ -77,24 +81,24 @@ export function ServiceCard({ service, isSelected, isCenter, style, onClick }: S
             aria-hidden
             style={{
               position: 'absolute',
-              inset: '-10px',
-              background: 'radial-gradient(circle, rgba(212,175,90,0.4), transparent 70%)',
-              filter: 'blur(7px)',
+              inset: '-12px',
+              background: 'radial-gradient(circle, rgba(212,175,90,0.45), transparent 70%)',
+              filter: 'blur(9px)',
               zIndex: 0,
             }}
           />
           <span style={{ position: 'relative', display: 'block', zIndex: 1 }}>
-            <ServiceIcon icon={service.icon} size={24} />
+            <ServiceIcon icon={service.icon} size={28} />
           </span>
         </div>
 
         <span
           style={{
-            fontSize: '0.6rem',
+            fontSize: '0.65rem',
             letterSpacing: '0.15em',
             color: 'rgba(240,237,232,0.4)',
             fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
-            marginTop: '0.9rem',
+            marginTop: '1.1rem',
           }}
         >
           {service.number}
@@ -102,10 +106,10 @@ export function ServiceCard({ service, isSelected, isCenter, style, onClick }: S
 
         <p
           style={{
-            fontSize: '0.85rem',
+            fontSize: '0.95rem',
             fontWeight: 400,
             lineHeight: 1.3,
-            marginTop: '0.4rem',
+            marginTop: '0.5rem',
             color: 'rgba(240,237,232,0.9)',
             fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
             textTransform: 'uppercase',

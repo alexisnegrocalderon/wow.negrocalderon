@@ -1,15 +1,24 @@
 'use client'
 
-import { useRef, useState } from 'react'
-import { motion, type PanInfo } from 'framer-motion'
+import { useRef, useState, useEffect } from 'react'
+import {
+  motion,
+  useMotionValue,
+  useTransform,
+  animate,
+  type PanInfo,
+  type AnimationPlaybackControls,
+  type MotionValue,
+} from 'framer-motion'
 import { useSceneStore } from '@/store/sceneStore'
-import { SERVICES } from '@/lib/servicesData'
+import { SERVICES, type Service } from '@/lib/servicesData'
 import { ServiceCard } from './ServiceCard'
 import { ServiceDetailPanel } from './ServiceDetailPanel'
 
-const RADIUS = 260
+const RADIUS = 300
 const ANGLE_STEP = 32
-const DRAG_STEP_PX = 120
+const DRAG_STEP_PX = 150
+const LAST_INDEX = SERVICES.length - 1
 
 type ServicesCarouselProps = {
   selected: Set<string>
@@ -18,45 +27,80 @@ type ServicesCarouselProps = {
 }
 
 export function ServicesCarousel({ selected, onToggleSelect, isMobile }: ServicesCarouselProps) {
-  const [centerIndex, setCenterIndex] = useState(0)
+  const track = useMotionValue(0)
+  const controlsRef = useRef<AnimationPlaybackControls | null>(null)
+  const dragStartTrack = useRef(0)
+
+  const [settledIndex, setSettledIndex] = useState(0)
   const [detailOpen, setDetailOpen] = useState(false)
-  const [dragOffset, setDragOffset] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const setActiveService = useSceneStore((s) => s.setActiveService)
 
-  const dragStartIndex = useRef(0)
+  const stopActive = () => {
+    controlsRef.current?.stop()
+    controlsRef.current = null
+  }
 
-  const clampIndex = (i: number) => Math.max(0, Math.min(SERVICES.length - 1, i))
+  const commitSettled = (i: number) => {
+    const clamped = Math.max(0, Math.min(LAST_INDEX, Math.round(i)))
+    setSettledIndex(clamped)
+    setActiveService(clamped)
+  }
 
-  const goTo = (i: number) => {
-    const next = clampIndex(i)
-    setCenterIndex(next)
-    setActiveService(next)
+  const goTo = (i: number, opts?: { openDetail?: boolean }) => {
+    stopActive()
+    const target = Math.max(0, Math.min(LAST_INDEX, i))
+    controlsRef.current = animate(track, target, {
+      type: 'spring',
+      stiffness: 300,
+      damping: 32,
+      mass: 0.9,
+      onComplete: () => {
+        commitSettled(target)
+        if (opts?.openDetail) setDetailOpen(true)
+      },
+    })
   }
 
   const handleCardClick = (i: number) => {
     if (isDragging) return
-    goTo(i)
-    setDetailOpen(true)
+    if (isMobile) {
+      commitSettled(i)
+      setDetailOpen(true)
+      return
+    }
+    goTo(i, { openDetail: true })
   }
 
   const handleDragStart = () => {
+    stopActive()
     setIsDragging(true)
-    dragStartIndex.current = centerIndex
+    dragStartTrack.current = track.get()
   }
 
   const handleDrag = (_: unknown, info: PanInfo) => {
-    setDragOffset(info.offset.x)
+    track.set(dragStartTrack.current - info.offset.x / DRAG_STEP_PX)
   }
 
   const handleDragEnd = (_: unknown, info: PanInfo) => {
-    const steps = -info.offset.x / DRAG_STEP_PX
-    const velocitySteps = -info.velocity.x / 900
-    const total = Math.round(steps + velocitySteps)
-    goTo(dragStartIndex.current + total)
-    setDragOffset(0)
     setIsDragging(false)
+    const velocity = -info.velocity.x / DRAG_STEP_PX
+    controlsRef.current = animate(track, track.get(), {
+      type: 'inertia',
+      velocity,
+      power: 0.5,
+      timeConstant: 350,
+      bounceStiffness: 400,
+      bounceDamping: 40,
+      restDelta: 0.001,
+      min: 0,
+      max: LAST_INDEX,
+      modifyTarget: (v) => Math.round(Math.max(0, Math.min(LAST_INDEX, v))),
+      onComplete: () => commitSettled(track.get()),
+    })
   }
+
+  useEffect(() => () => stopActive(), [])
 
   if (isMobile) {
     return (
@@ -75,7 +119,7 @@ export function ServicesCarousel({ selected, onToggleSelect, isMobile }: Service
             key={s.number}
             service={s}
             isSelected={selected.has(s.number)}
-            isCenter={i === centerIndex}
+            isCenter={i === settledIndex}
             onClick={() => handleCardClick(i)}
             style={{ scrollSnapAlign: 'center' }}
           />
@@ -97,11 +141,11 @@ export function ServicesCarousel({ selected, onToggleSelect, isMobile }: Service
           >
             <div onClick={(e) => e.stopPropagation()} style={{ width: '100%' }}>
               <ServiceDetailPanel
-                service={detailOpen ? SERVICES[centerIndex] : null}
-                isSelected={selected.has(SERVICES[centerIndex].number)}
+                service={detailOpen ? SERVICES[settledIndex] : null}
+                isSelected={selected.has(SERVICES[settledIndex].number)}
                 onToggleSelect={() => {
-                  const wasSelected = selected.has(SERVICES[centerIndex].number)
-                  onToggleSelect(SERVICES[centerIndex].number)
+                  const wasSelected = selected.has(SERVICES[settledIndex].number)
+                  onToggleSelect(SERVICES[settledIndex].number)
                   if (!wasSelected) setDetailOpen(false)
                 }}
                 onClose={() => setDetailOpen(false)}
@@ -115,7 +159,7 @@ export function ServicesCarousel({ selected, onToggleSelect, isMobile }: Service
 
   return (
     <div>
-      <div style={{ position: 'relative', height: '440px' }}>
+      <div style={{ position: 'relative', height: '520px' }}>
         <div style={{ position: 'absolute', inset: 0, perspective: '1300px' }}>
           <div
             aria-hidden
@@ -123,7 +167,7 @@ export function ServicesCarousel({ selected, onToggleSelect, isMobile }: Service
               position: 'absolute',
               top: '50%',
               left: '50%',
-              width: 'min(900px, 92vw)',
+              width: 'min(960px, 92vw)',
               height: '64px',
               transform: 'translate(-50%, -50%)',
               borderRadius: '50%',
@@ -144,66 +188,43 @@ export function ServicesCarousel({ selected, onToggleSelect, isMobile }: Service
             onDragEnd={handleDragEnd}
             style={{ position: 'relative', width: '100%', height: '100%', cursor: 'grab' }}
           >
-            {SERVICES.map((s, i) => {
-              const continuousIndex = i - centerIndex + dragOffset / -DRAG_STEP_PX
-              const angle = continuousIndex * ANGLE_STEP
-              const rad = (angle * Math.PI) / 180
-              const translateX = Math.sin(rad) * RADIUS
-              const translateZ = Math.cos(rad) * RADIUS - RADIUS
-              const absDist = Math.abs(continuousIndex)
-              const scale = Math.max(0.55, 1 - absDist * 0.18)
-              let opacity = Math.max(0, 1 - absDist * 0.35)
-              if (detailOpen) opacity *= i === centerIndex ? 0.2 : 0.12
-
-              return (
-                <ServiceCard
-                  key={s.number}
-                  service={s}
-                  isSelected={selected.has(s.number)}
-                  isCenter={i === centerIndex}
-                  onClick={() => handleCardClick(i)}
-                  style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    marginLeft: '-75px',
-                    marginTop: '-95px',
-                    transform: `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${-angle}deg) scale(${scale})`,
-                    opacity,
-                    zIndex: Math.round(100 - absDist * 10),
-                    pointerEvents: detailOpen || absDist > 3 ? 'none' : 'auto',
-                    transition: isDragging
-                      ? 'none'
-                      : 'transform 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.4s ease',
-                  }}
-                />
-              )
-            })}
+            {SERVICES.map((s, i) => (
+              <CoverflowCard
+                key={s.number}
+                index={i}
+                service={s}
+                track={track}
+                isSelected={selected.has(s.number)}
+                isCenter={i === settledIndex}
+                detailOpen={detailOpen}
+                onClick={() => handleCardClick(i)}
+              />
+            ))}
           </motion.div>
         </div>
 
         <button
-          onClick={() => goTo(centerIndex - 1)}
-          disabled={centerIndex === 0}
+          onClick={() => goTo(settledIndex - 1)}
+          disabled={settledIndex === 0}
           data-cursor="pointer"
           aria-label="Anterior"
           style={{
             ...arrowStyle,
             left: '0.5rem',
-            opacity: centerIndex === 0 ? 0.2 : 0.7,
+            opacity: settledIndex === 0 ? 0.2 : 0.7,
           }}
         >
           ←
         </button>
         <button
-          onClick={() => goTo(centerIndex + 1)}
-          disabled={centerIndex === SERVICES.length - 1}
+          onClick={() => goTo(settledIndex + 1)}
+          disabled={settledIndex === LAST_INDEX}
           data-cursor="pointer"
           aria-label="Siguiente"
           style={{
             ...arrowStyle,
             right: '0.5rem',
-            opacity: centerIndex === SERVICES.length - 1 ? 0.2 : 0.7,
+            opacity: settledIndex === LAST_INDEX ? 0.2 : 0.7,
           }}
         >
           →
@@ -221,11 +242,11 @@ export function ServicesCarousel({ selected, onToggleSelect, isMobile }: Service
             }}
           >
             <ServiceDetailPanel
-              service={detailOpen ? SERVICES[centerIndex] : null}
-              isSelected={selected.has(SERVICES[centerIndex].number)}
+              service={detailOpen ? SERVICES[settledIndex] : null}
+              isSelected={selected.has(SERVICES[settledIndex].number)}
               onToggleSelect={() => {
-                const wasSelected = selected.has(SERVICES[centerIndex].number)
-                onToggleSelect(SERVICES[centerIndex].number)
+                const wasSelected = selected.has(SERVICES[settledIndex].number)
+                onToggleSelect(SERVICES[settledIndex].number)
                 if (!wasSelected) setDetailOpen(false)
               }}
               onClose={() => setDetailOpen(false)}
@@ -262,6 +283,65 @@ export function ServicesCarousel({ selected, onToggleSelect, isMobile }: Service
         </p>
       </div>
     </div>
+  )
+}
+
+type CoverflowCardProps = {
+  index: number
+  service: Service
+  track: MotionValue<number>
+  isSelected: boolean
+  isCenter: boolean
+  detailOpen: boolean
+  onClick: () => void
+}
+
+function CoverflowCard({ index, service, track, isSelected, isCenter, detailOpen, onClick }: CoverflowCardProps) {
+  const continuousIndex = useTransform(track, (t) => index - t)
+
+  const transformStr = useTransform(continuousIndex, (ci) => {
+    const angle = ci * ANGLE_STEP
+    const rad = (angle * Math.PI) / 180
+    const translateX = Math.sin(rad) * RADIUS
+    const translateZ = Math.cos(rad) * RADIUS - RADIUS
+    const absDist = Math.abs(ci)
+    const scale = Math.max(0.55, 1 - absDist * 0.18)
+    return `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${-angle}deg) scale(${scale})`
+  })
+
+  const opacity = useTransform(continuousIndex, (ci) => {
+    const absDist = Math.abs(ci)
+    let o = Math.max(0, 1 - absDist * 0.35)
+    if (detailOpen) o *= isCenter ? 0.2 : 0.12
+    return o
+  })
+
+  const zIndex = useTransform(continuousIndex, (ci) => Math.round(100 - Math.abs(ci) * 10))
+
+  return (
+    <motion.div
+      style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        width: '190px',
+        height: '240px',
+        marginLeft: '-95px',
+        marginTop: '-120px',
+        transform: transformStr,
+        opacity,
+        zIndex,
+        pointerEvents: detailOpen ? 'none' : 'auto',
+      }}
+    >
+      <ServiceCard
+        service={service}
+        isSelected={isSelected}
+        isCenter={isCenter}
+        onClick={onClick}
+        style={{ width: '100%', height: '100%' }}
+      />
+    </motion.div>
   )
 }
 
