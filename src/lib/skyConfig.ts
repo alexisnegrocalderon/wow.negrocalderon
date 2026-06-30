@@ -73,9 +73,9 @@ export const SKY_KEYFRAMES: Array<{ at: number; sky: SkyConfig }> = [
     },
   },
   {
-    at: 0.52,
+    at: 0.4655,
     sky: {
-      // Cruise — high altitude, clear deep azure
+      // Cruise — high altitude, clear deep azure (now lines up with the end of "The Experience")
       zenith:  [0.04, 0.12, 0.44], horizon: [0.16, 0.48, 0.76], nadir: [0.28, 0.62, 0.88],
       sunColor:[0.88, 0.94, 1.0], sunPos: [0.78, 0.88], sunSize: 0.60, sunIntensity: 0.55,
       horizonHeight: 0.42, horizonBlur: 0.22,
@@ -85,9 +85,9 @@ export const SKY_KEYFRAMES: Array<{ at: number; sky: SkyConfig }> = [
     },
   },
   {
-    at: 0.66,
+    at: 0.5517,
     sky: {
-      // Experience — golden hour, warm purples and amber
+      // Golden hour, warm purples and amber — lines up with the end of Turbulence
       zenith:  [0.07, 0.03, 0.20], horizon: [0.58, 0.20, 0.04], nadir: [0.40, 0.14, 0.02],
       sunColor:[1.0, 0.62, 0.08], sunPos: [0.62, 0.24], sunSize: 0.58, sunIntensity: 2.2,
       horizonHeight: 0.26, horizonBlur: 0.22,
@@ -97,10 +97,10 @@ export const SKY_KEYFRAMES: Array<{ at: number; sky: SkyConfig }> = [
     },
   },
   {
-    at: 0.77,
+    at: 0.6552,
     sky: {
-      // Turbulence — dramatic warm dusk, NOT dark/cold. Deep orange-purple.
-      // Feels like turbulence at sunset — stays warm but becomes intense.
+      // Dramatic warm dusk, NOT dark/cold. Deep orange-purple.
+      // Lines up with the end of Destination — the statement lands as the sky intensifies.
       zenith:  [0.06, 0.02, 0.16], horizon: [0.52, 0.16, 0.02], nadir: [0.35, 0.10, 0.01],
       sunColor:[1.0, 0.48, 0.06], sunPos: [0.48, 0.18], sunSize: 0.70, sunIntensity: 1.9,
       horizonHeight: 0.24, horizonBlur: 0.28,
@@ -110,10 +110,10 @@ export const SKY_KEYFRAMES: Array<{ at: number; sky: SkyConfig }> = [
     },
   },
   {
-    at: 0.88,
+    at: 0.8276,
     sky: {
-      // Destination — descent entering cloud layer.
-      // Warm pink-peach, thick clouds all around, immersive.
+      // Descent, entering the cloud layer — warm pink-peach, thick clouds all
+      // around. This is the moment the cabin interior takes over the journey.
       zenith:  [0.42, 0.22, 0.28], horizon: [0.82, 0.62, 0.52], nadir: [0.88, 0.72, 0.58],
       sunColor:[1.0, 0.78, 0.55], sunPos: [0.55, 0.62], sunSize: 0.75, sunIntensity: 0.9,
       horizonHeight: 0.52, horizonBlur: 0.35,
@@ -123,7 +123,7 @@ export const SKY_KEYFRAMES: Array<{ at: number; sky: SkyConfig }> = [
     },
   },
   {
-    at: 0.95,
+    at: 0.9138,
     sky: {
       // Mission Control — below the cloud layer, city warmth below.
       // Amber-warm underside of clouds, orange glow from city/ground.

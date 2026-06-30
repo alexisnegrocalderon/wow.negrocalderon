@@ -92,7 +92,7 @@ export function Stage6Turbulence() {
           left: '2rem',
         }}
       >
-        06 — TURBULENCE
+        05 — TURBULENCE
       </span>
 
       <div

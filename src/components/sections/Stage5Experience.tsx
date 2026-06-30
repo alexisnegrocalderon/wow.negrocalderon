@@ -68,7 +68,7 @@ export function Stage5Experience() {
           className="label-text"
           style={{ display: 'block', marginBottom: '2rem' }}
         >
-          05 — THE EXPERIENCE
+          04 — THE EXPERIENCE
         </span>
 
         <h2 className="display-md" style={{ marginBottom: '8vh' }}>

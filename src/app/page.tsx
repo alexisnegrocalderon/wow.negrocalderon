@@ -9,13 +9,14 @@ import { LenisProvider } from '@/components/providers/LenisProvider'
 import { LoadingScreen } from '@/components/ui/LoadingScreen'
 import { CustomCursor } from '@/components/ui/CustomCursor'
 import { SoundToggle } from '@/components/ui/SoundToggle'
+import { CabinFrame } from '@/components/ui/CabinFrame'
 import { Stage1Boarding } from '@/components/sections/Stage1Boarding'
 import { Stage2TakeOff } from '@/components/sections/Stage2TakeOff'
 import { Stage3Ascend } from '@/components/sections/Stage3Ascend'
-import { Stage4Cruise } from '@/components/sections/Stage4Cruise'
 import { Stage5Experience } from '@/components/sections/Stage5Experience'
 import { Stage6Turbulence } from '@/components/sections/Stage6Turbulence'
 import { Stage7Destination } from '@/components/sections/Stage7Destination'
+import { CabinServices } from '@/components/sections/CabinServices'
 import { Stage8MissionControl } from '@/components/sections/Stage8MissionControl'
 import { Closing } from '@/components/sections/Closing'
 import { useSceneStore } from '@/store/sceneStore'
@@ -38,7 +39,7 @@ function ScrollTracker() {
     if (!el) return
 
     // Stage breakpoints (cumulative scroll progress thresholds)
-    const STAGES = [0, 0.08, 0.17, 0.30, 0.52, 0.66, 0.77, 0.88, 0.95, 1]
+    const STAGES = [0, 0.08, 0.17, 0.30, 0.4655, 0.5517, 0.6552, 0.8276, 0.9138, 1]
 
     let lastProgress = 0
     let lastTime = performance.now()
@@ -86,6 +87,7 @@ export default function Home() {
       <LoadingScreen />
       <CustomCursor />
       <SoundToggle />
+      <CabinFrame />
 
       {/* Scroll journey */}
       <main
@@ -100,10 +102,10 @@ export default function Home() {
         <Stage1Boarding />
         <Stage2TakeOff />
         <Stage3Ascend />
-        <Stage4Cruise />
         <Stage5Experience />
         <Stage6Turbulence />
         <Stage7Destination />
+        <CabinServices />
         <Stage8MissionControl />
         <Closing />
       </main>

@@ -57,7 +57,7 @@ export function Stage7Destination() {
           className="label-text"
           style={{ display: 'block', marginBottom: '6vh' }}
         >
-          07 — DESTINATION
+          06 — DESTINATION
         </span>
 
         <div style={{ overflow: 'hidden', marginBottom: '1rem' }}>
