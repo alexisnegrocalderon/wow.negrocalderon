@@ -4,7 +4,6 @@ import { useRef, useEffect, useState, useCallback } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SITE_CONFIG } from '@/config'
-import { useSceneStore } from '@/store/sceneStore'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 type ProjectType = 'landing' | 'website-small' | 'website-large' | 'ecommerce' | null
@@ -53,44 +52,6 @@ const TIMELINE_WEEKS: Record<string, string> = {
   express: '1–2',
   standard: '2–4',
   relaxed: '4–8',
-}
-
-// ─── Pre-fill from Section 3's selected service windows ───────────────────────
-const SERVICE_TO_PROJECT_TYPE: Record<string, ProjectType> = {
-  'Landing Pages': 'landing',
-  'Sitios Web': 'website-small',
-}
-const SERVICE_TO_ADDON: Record<string, keyof Addons> = {
-  Branding: 'branding',
-  'Automatización IA': 'automation',
-  Contenido: 'content',
-}
-
-function buildInitialForm(): FormData {
-  const selectedServices = useSceneStore.getState().selectedServices
-  const addons: Addons = {
-    branding: false,
-    automation: false,
-    content: false,
-    domain: false,
-    hosting: false,
-    integrations: false,
-  }
-  let projectType: ProjectType = null
-  selectedServices.forEach((name) => {
-    if (SERVICE_TO_PROJECT_TYPE[name] && !projectType) projectType = SERVICE_TO_PROJECT_TYPE[name]
-    if (SERVICE_TO_ADDON[name]) addons[SERVICE_TO_ADDON[name]] = true
-  })
-  return {
-    name: '',
-    company: '',
-    businessType: '',
-    objective: '',
-    projectType,
-    timeline: null,
-    addons,
-    comments: '',
-  }
 }
 
 function calcPrice(form: FormData) {
@@ -253,7 +214,23 @@ export function Stage8MissionControl() {
   const contentRef = useRef<HTMLDivElement>(null)
   const [step, setStep] = useState(0)
 
-  const [form, setForm] = useState<FormData>(buildInitialForm)
+  const [form, setForm] = useState<FormData>({
+    name: '',
+    company: '',
+    businessType: '',
+    objective: '',
+    projectType: null,
+    timeline: null,
+    addons: {
+      branding: false,
+      automation: false,
+      content: false,
+      domain: false,
+      hosting: false,
+      integrations: false,
+    },
+    comments: '',
+  })
 
   const { price, weeks } = calcPrice(form)
 
