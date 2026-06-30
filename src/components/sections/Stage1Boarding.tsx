@@ -34,15 +34,25 @@ export function Stage1Boarding() {
       className="stage-section"
       style={{ minHeight: '100vh', padding: '0 2rem' }}
     >
-      <div style={{ maxWidth: '900px', width: '100%', paddingTop: '22vh' }}>
+      <div style={{ maxWidth: '900px', width: '100%', paddingTop: '8vh' }}>
         <span ref={labelRef} className="label-text" style={{ display: 'block', marginBottom: '2.5rem' }}>
           01 — BOARDING
         </span>
 
-        <h1 ref={headRef} className="display-xl" style={{ marginBottom: '3rem', textShadow: '0 2px 40px rgba(0,0,0,0.4)' }}>
+        <h1
+          ref={headRef}
+          className="display-xl"
+          style={{
+            marginBottom: '2rem',
+            textShadow: '0 2px 40px rgba(0,0,0,0.4)',
+            fontFamily: 'var(--font-cormorant)',
+            fontWeight: 300,
+            fontSize: 'clamp(4rem, 11vw, 14rem)',
+          }}
+        >
           Tu marca
           <br />
-          <em className="editorial" style={{ color: 'rgba(240,237,232,0.5)' }}>
+          <em style={{ fontStyle: 'italic', color: 'rgba(240,237,232,0.6)' }}>
             merece despegar.
           </em>
         </h1>

@@ -15,9 +15,9 @@ import { SERVICES, type Service } from '@/lib/servicesData'
 import { ServiceCard } from './ServiceCard'
 import { ServiceDetailPanel } from './ServiceDetailPanel'
 
-const RADIUS = 300
-const ANGLE_STEP = 32
-const DRAG_STEP_PX = 150
+const RADIUS = 320
+const ANGLE_STEP = 34
+const DRAG_STEP_PX = 160
 const LAST_INDEX = SERVICES.length - 1
 
 type ServicesCarouselProps = {
@@ -159,7 +159,7 @@ export function ServicesCarousel({ selected, onToggleSelect, isMobile }: Service
 
   return (
     <div>
-      <div style={{ position: 'relative', height: '520px' }}>
+      <div style={{ position: 'relative', height: '360px' }}>
         <div style={{ position: 'absolute', inset: 0, perspective: '1300px' }}>
           <div
             aria-hidden
@@ -168,7 +168,7 @@ export function ServicesCarousel({ selected, onToggleSelect, isMobile }: Service
               top: '50%',
               left: '50%',
               width: 'min(960px, 92vw)',
-              height: '64px',
+              height: '130px',
               transform: 'translate(-50%, -50%)',
               borderRadius: '50%',
               border: '1px solid rgba(212,175,90,0.35)',
@@ -324,10 +324,10 @@ function CoverflowCard({ index, service, track, isSelected, isCenter, detailOpen
         position: 'absolute',
         top: '50%',
         left: '50%',
-        width: '190px',
-        height: '240px',
-        marginLeft: '-95px',
-        marginTop: '-120px',
+        width: '300px',
+        height: '130px',
+        marginLeft: '-150px',
+        marginTop: '-65px',
         transform: transformStr,
         opacity,
         zIndex,
