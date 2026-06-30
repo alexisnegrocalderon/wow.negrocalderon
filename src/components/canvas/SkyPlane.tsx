@@ -197,7 +197,7 @@ export function SkyPlane() {
   })
 
   return (
-    <mesh renderOrder={-100} material={material}>
+    <mesh renderOrder={-100} material={material} frustumCulled={false}>
       <planeGeometry args={[2, 2]} />
     </mesh>
   )

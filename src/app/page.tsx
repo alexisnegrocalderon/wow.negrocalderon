@@ -11,7 +11,6 @@ import { CustomCursor } from '@/components/ui/CustomCursor'
 import { SoundToggle } from '@/components/ui/SoundToggle'
 import { CabinFrame } from '@/components/ui/CabinFrame'
 import { CabinPhoto } from '@/components/ui/CabinPhoto'
-import { CloudBreakVeil } from '@/components/ui/CloudBreakVeil'
 import { section3CabinFade } from '@/lib/cabinFade'
 import { Stage1Boarding } from '@/components/sections/Stage1Boarding'
 import { Stage2TakeOff } from '@/components/sections/Stage2TakeOff'
@@ -90,7 +89,6 @@ export default function Home() {
       <LoadingScreen />
       <CustomCursor />
       <SoundToggle />
-      <CloudBreakVeil />
       <CabinPhoto fade={section3CabinFade} maxOpacity={0.8} />
       <CabinPhoto />
       <CabinFrame />
