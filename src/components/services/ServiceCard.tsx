@@ -36,7 +36,7 @@ export function ServiceCard({ service, isSelected, isCenter, style, onClick }: S
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'flex-start',
-          background: isCenter ? 'rgba(10,9,7,0.6)' : 'rgba(10,9,7,0.45)',
+          background: isCenter ? 'rgba(10,9,7,0.35)' : 'rgba(10,9,7,0.22)',
           borderColor: isSelected ? 'rgba(212,175,90,0.7)' : undefined,
           boxShadow: isSelected
             ? '0 0 0 1px rgba(212,175,90,0.4), 0 20px 50px rgba(0,0,0,0.4)'

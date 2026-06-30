@@ -99,7 +99,11 @@ export function ServicesCarousel({ selected, onToggleSelect, isMobile }: Service
               <ServiceDetailPanel
                 service={detailOpen ? SERVICES[centerIndex] : null}
                 isSelected={selected.has(SERVICES[centerIndex].number)}
-                onToggleSelect={() => onToggleSelect(SERVICES[centerIndex].number)}
+                onToggleSelect={() => {
+                  const wasSelected = selected.has(SERVICES[centerIndex].number)
+                  onToggleSelect(SERVICES[centerIndex].number)
+                  if (!wasSelected) setDetailOpen(false)
+                }}
                 onClose={() => setDetailOpen(false)}
               />
             </div>
@@ -201,7 +205,11 @@ export function ServicesCarousel({ selected, onToggleSelect, isMobile }: Service
             <ServiceDetailPanel
               service={detailOpen ? SERVICES[centerIndex] : null}
               isSelected={selected.has(SERVICES[centerIndex].number)}
-              onToggleSelect={() => onToggleSelect(SERVICES[centerIndex].number)}
+              onToggleSelect={() => {
+                const wasSelected = selected.has(SERVICES[centerIndex].number)
+                onToggleSelect(SERVICES[centerIndex].number)
+                if (!wasSelected) setDetailOpen(false)
+              }}
               onClose={() => setDetailOpen(false)}
             />
           </div>
