@@ -9,6 +9,7 @@ interface SceneState {
   soundEnabled: boolean
   isEntered: boolean
   activeService: number | null
+  selectedServices: string[]
 
   setScrollProgress: (p: number) => void
   setScrollVelocity: (v: number) => void
@@ -18,6 +19,7 @@ interface SceneState {
   toggleSound: () => void
   setIsEntered: (v: boolean) => void
   setActiveService: (i: number | null) => void
+  setSelectedServices: (s: string[]) => void
 }
 
 export const useSceneStore = create<SceneState>((set) => ({
@@ -29,6 +31,7 @@ export const useSceneStore = create<SceneState>((set) => ({
   soundEnabled: false,
   isEntered: false,
   activeService: null,
+  selectedServices: [],
 
   setScrollProgress: (p) => set({ scrollProgress: p }),
   setScrollVelocity: (v) => set({ scrollVelocity: v }),
@@ -39,4 +42,5 @@ export const useSceneStore = create<SceneState>((set) => ({
     set((state) => ({ soundEnabled: !state.soundEnabled })),
   setIsEntered: (v) => set({ isEntered: v }),
   setActiveService: (i) => set({ activeService: i }),
+  setSelectedServices: (s) => set({ selectedServices: s }),
 }))

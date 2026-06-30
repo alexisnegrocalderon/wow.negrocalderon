@@ -2,21 +2,34 @@
 
 import { useEffect, useRef } from 'react'
 import { useSceneStore } from '@/store/sceneStore'
-import { cabinOpacity } from '@/lib/cabinFade'
+import { cabinOpacity as defaultCabinOpacity, type CabinFadeCurve } from '@/lib/cabinFade'
 
-export function CabinPhoto() {
+type CabinPhotoProps = {
+  fade?: CabinFadeCurve
+  maxOpacity?: number
+  backgroundPosition?: string
+  zIndex?: number
+}
+
+export function CabinPhoto({
+  fade,
+  maxOpacity = 0.65,
+  backgroundPosition = 'center 42%',
+  zIndex = 2,
+}: CabinPhotoProps) {
   const rootRef = useRef<HTMLDivElement>(null)
+  const getOpacity = fade ? fade.cabinOpacity : defaultCabinOpacity
 
   useEffect(() => {
     let raf: number
     const tick = () => {
       const p = useSceneStore.getState().scrollProgress
-      if (rootRef.current) rootRef.current.style.opacity = String(cabinOpacity(p) * 0.65)
+      if (rootRef.current) rootRef.current.style.opacity = String(getOpacity(p) * maxOpacity)
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [])
+  }, [getOpacity, maxOpacity])
 
   return (
     <div
@@ -25,12 +38,12 @@ export function CabinPhoto() {
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: 2,
+        zIndex,
         opacity: 0,
         pointerEvents: 'none',
         backgroundImage: 'url(/images/cabin-interior.webp)',
         backgroundSize: 'cover',
-        backgroundPosition: 'center 42%',
+        backgroundPosition,
         filter: 'saturate(0.9) brightness(0.85)',
       }}
     />

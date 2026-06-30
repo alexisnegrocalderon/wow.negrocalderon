@@ -1,21 +1,57 @@
-// Scroll-progress range where the cabin interior is on screen.
+export type CabinFadeCurve = {
+  cabinOpacity: (p: number) => number
+  veilOpacity: (p: number) => number
+}
+
+// Builds a triangular fade curve (fade in, hold full, fade out) plus a brief
+// whiteout "veil" pulse right as the curve reaches full opacity — used to
+// sync a cabin-interior visual to a specific scroll-progress window.
+export function makeCabinFade(
+  fadeInStart: number,
+  fullStart: number,
+  fullEnd: number,
+  fadeOutEnd: number
+): CabinFadeCurve {
+  return {
+    cabinOpacity(p: number) {
+      if (p <= fadeInStart || p >= fadeOutEnd) return 0
+      if (p < fullStart) return (p - fadeInStart) / (fullStart - fadeInStart)
+      if (p > fullEnd) return 1 - (p - fullEnd) / (fadeOutEnd - fullEnd)
+      return 1
+    },
+    veilOpacity(p: number) {
+      const width = 0.03
+      const d = Math.abs(p - fullStart)
+      if (d > width) return 0
+      return (1 - d / width) * 0.6
+    },
+  }
+}
+
+// Scroll-progress range where the Section 7 cabin interior is on screen.
 // Lines up with the start/end of the CabinServices section (see page.tsx).
 export const FADE_IN_START = 0.60
 export const FULL_START    = 0.6552
 export const FULL_END      = 0.80
 export const FADE_OUT_END  = 0.8276
 
-export function cabinOpacity(p: number) {
-  if (p <= FADE_IN_START || p >= FADE_OUT_END) return 0
-  if (p < FULL_START) return (p - FADE_IN_START) / (FULL_START - FADE_IN_START)
-  if (p > FULL_END) return 1 - (p - FULL_END) / (FADE_OUT_END - FULL_END)
-  return 1
-}
+export const { cabinOpacity, veilOpacity } = makeCabinFade(
+  FADE_IN_START,
+  FULL_START,
+  FULL_END,
+  FADE_OUT_END
+)
 
-// A brief whiteout right as we punch through the cloud layer into the cabin.
-export function veilOpacity(p: number) {
-  const width = 0.03
-  const d = Math.abs(p - FULL_START)
-  if (d > width) return 0
-  return (1 - d / width) * 0.6
-}
+// Scroll-progress range where Section 3's cabin background is on screen.
+// Lines up with Stage3Ascend's slot in the STAGES array (see page.tsx): 0.17 -> 0.30.
+export const SECTION3_FADE_IN_START = 0.17
+export const SECTION3_FULL_START    = 0.20
+export const SECTION3_FULL_END      = 0.27
+export const SECTION3_FADE_OUT_END  = 0.30
+
+export const section3CabinFade = makeCabinFade(
+  SECTION3_FADE_IN_START,
+  SECTION3_FULL_START,
+  SECTION3_FULL_END,
+  SECTION3_FADE_OUT_END
+)
