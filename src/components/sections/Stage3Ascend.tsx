@@ -48,7 +48,7 @@ export function Stage3Ascend() {
     <section
       ref={sectionRef}
       className="stage-section"
-      style={{ minHeight: '100vh', padding: '15vh 2rem', alignItems: 'flex-start' }}
+      style={{ minHeight: '100vh', padding: '15vh 2rem', alignItems: 'flex-start', overflowX: 'hidden' }}
     >
       <div style={{ maxWidth: '900px', width: '100%' }}>
         <div ref={headingRef} style={{ textAlign: 'center', marginBottom: '4vh' }}>
@@ -79,8 +79,8 @@ export function Stage3Ascend() {
             alignItems: 'start',
           }}
         >
-          <ServicesList selected={selected} onToggle={toggleSelect} />
-          <EscalasPanel selected={selectedServices} onRemove={toggleSelect} />
+          <ServicesList selected={selected} onToggle={toggleSelect} isMobile={isMobile} />
+          <EscalasPanel selected={selectedServices} onRemove={toggleSelect} isMobile={isMobile} />
         </div>
       </div>
     </section>

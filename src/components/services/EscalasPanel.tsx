@@ -7,6 +7,7 @@ import { buildServicesWhatsAppMessage, buildWhatsAppUrl } from '@/lib/whatsapp'
 type EscalasPanelProps = {
   selected: Service[]
   onRemove: (number: string) => void
+  isMobile?: boolean
 }
 
 function parseBasePrice(price: string): number {
@@ -14,7 +15,7 @@ function parseBasePrice(price: string): number {
   return match ? parseInt(match[1], 10) : 0
 }
 
-export function EscalasPanel({ selected, onRemove }: EscalasPanelProps) {
+export function EscalasPanel({ selected, onRemove, isMobile }: EscalasPanelProps) {
   const total = selected.reduce((sum, s) => sum + parseBasePrice(s.price), 0)
 
   const handleQuote = () => {
@@ -27,10 +28,11 @@ export function EscalasPanel({ selected, onRemove }: EscalasPanelProps) {
       className="glass"
       style={{
         borderRadius: '14px',
-        padding: '1.5rem',
+        padding: isMobile ? '1.25rem' : '1.5rem',
         background: 'rgba(8,7,6,0.62)',
-        position: 'sticky',
+        position: isMobile ? 'static' : 'sticky',
         top: '12vh',
+        overflow: 'hidden',
       }}
     >
       {/* Heading */}
@@ -46,7 +48,7 @@ export function EscalasPanel({ selected, onRemove }: EscalasPanelProps) {
         <span
           style={{
             fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
-            fontSize: '0.65rem',
+            fontSize: isMobile ? '0.72rem' : '0.65rem',
             letterSpacing: '0.2em',
             textTransform: 'uppercase',
             color: 'rgba(240,237,232,0.55)',
@@ -109,7 +111,7 @@ export function EscalasPanel({ selected, onRemove }: EscalasPanelProps) {
                 style={{
                   flex: 1,
                   fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
-                  fontSize: '0.7rem',
+                  fontSize: isMobile ? '0.8rem' : '0.7rem',
                   color: 'rgba(240,237,232,0.8)',
                   overflow: 'hidden',
                   whiteSpace: 'nowrap',
@@ -121,7 +123,7 @@ export function EscalasPanel({ selected, onRemove }: EscalasPanelProps) {
               <span
                 style={{
                   fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
-                  fontSize: '0.62rem',
+                  fontSize: isMobile ? '0.7rem' : '0.62rem',
                   color: 'rgba(212,175,90,0.65)',
                   whiteSpace: 'nowrap',
                   flexShrink: 0,
@@ -190,17 +192,16 @@ export function EscalasPanel({ selected, onRemove }: EscalasPanelProps) {
         data-cursor="pointer"
         style={{
           width: '100%',
-          padding: '0.9rem 1rem',
+          padding: isMobile ? '1rem' : '0.9rem 1rem',
           background: selected.length > 0 ? 'rgba(212,175,90,0.9)' : 'rgba(212,175,90,0.15)',
           border: '1px solid rgba(212,175,90,0.65)',
           color: selected.length > 0 ? '#0a0a0a' : 'rgba(212,175,90,0.35)',
-          fontSize: '0.62rem',
+          fontSize: isMobile ? '0.68rem' : '0.62rem',
           letterSpacing: '0.16em',
           textTransform: 'uppercase',
           cursor: selected.length > 0 ? 'none' : 'default',
           fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif',
           transition: 'all 0.25s ease',
-          marginTop: selected.length === 0 ? 0 : '0',
         }}
       >
         Itinerario seleccionado →
