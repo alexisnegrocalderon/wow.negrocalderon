@@ -61,15 +61,30 @@ export const SKY_KEYFRAMES: Array<{ at: number; sky: SkyConfig }> = [
     },
   },
   {
+    at: 0.24,
+    sky: {
+      // Deep inside the cloud bank — full whiteout, mid-Ascend.
+      // This is the "atravesando las nubes" moment: sun diffuses, particles
+      // turn into streaking mist, the world goes soft and bright.
+      zenith:  [0.88, 0.89, 0.90], horizon: [0.96, 0.94, 0.91], nadir: [0.93, 0.90, 0.86],
+      sunColor:[1.0, 0.98, 0.95], sunPos: [0.5, 0.55], sunSize: 0.95, sunIntensity: 0.45,
+      horizonHeight: 0.50, horizonBlur: 0.42,
+      particleA: [1.0, 1.0, 0.98], particleB: [0.90, 0.92, 0.94],
+      particleOpacity: 1.0, particleScale: 2.3, twinkle: 0.0,
+      cloudIntensity: 0.95, cloudSize: 2.0, cloudColor: [1.0, 1.0, 0.97],
+    },
+  },
+  {
     at: 0.30,
     sky: {
-      // Ascend — climbing through clouds, bright peach-white
+      // Breaking out above the cloud layer — bright peach-white, clearing fast.
+      // Eases off as the cabin interior background takes over the visual load.
       zenith:  [0.52, 0.68, 0.88], horizon: [0.90, 0.86, 0.80], nadir: [0.95, 0.90, 0.84],
       sunColor:[1.0, 0.96, 0.88], sunPos: [0.68, 0.78], sunSize: 0.65, sunIntensity: 0.9,
       horizonHeight: 0.55, horizonBlur: 0.28,
       particleA: [1.0, 0.98, 0.95], particleB: [0.84, 0.88, 0.92],
       particleOpacity: 1.0, particleScale: 1.8, twinkle: 0.0,
-      cloudIntensity: 0.50, cloudSize: 3.5, cloudColor: [1.0, 0.97, 0.93],
+      cloudIntensity: 0.32, cloudSize: 3.5, cloudColor: [1.0, 0.97, 0.93],
     },
   },
   {

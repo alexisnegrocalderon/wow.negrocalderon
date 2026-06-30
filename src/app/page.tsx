@@ -10,6 +10,7 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen'
 import { CustomCursor } from '@/components/ui/CustomCursor'
 import { SoundToggle } from '@/components/ui/SoundToggle'
 import { CabinFrame } from '@/components/ui/CabinFrame'
+import { CloudBreakVeil } from '@/components/ui/CloudBreakVeil'
 import { Stage1Boarding } from '@/components/sections/Stage1Boarding'
 import { Stage2TakeOff } from '@/components/sections/Stage2TakeOff'
 import { Stage3Ascend } from '@/components/sections/Stage3Ascend'
@@ -87,6 +88,7 @@ export default function Home() {
       <LoadingScreen />
       <CustomCursor />
       <SoundToggle />
+      <CloudBreakVeil />
       <CabinFrame />
 
       {/* Scroll journey */}
