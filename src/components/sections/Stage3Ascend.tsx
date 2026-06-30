@@ -4,8 +4,8 @@ import { useRef, useEffect, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SERVICES } from '@/lib/servicesData'
-import { ServicesCarousel } from '@/components/services/ServicesCarousel'
-import { SelectedServicesBar } from '@/components/services/SelectedServicesBar'
+import { ServicesList } from '@/components/services/ServicesList'
+import { EscalasPanel } from '@/components/services/EscalasPanel'
 
 export function Stage3Ascend() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -48,16 +48,9 @@ export function Stage3Ascend() {
     <section
       ref={sectionRef}
       className="stage-section"
-      style={{ minHeight: '180vh', padding: '15vh 2rem', alignItems: 'flex-start' }}
+      style={{ minHeight: '100vh', padding: '15vh 2rem', alignItems: 'flex-start' }}
     >
-      <div
-        style={{
-          maxWidth: '900px',
-          width: '100%',
-          position: 'sticky',
-          top: '12vh',
-        }}
-      >
+      <div style={{ maxWidth: '900px', width: '100%' }}>
         <div ref={headingRef} style={{ textAlign: 'center', marginBottom: '4vh' }}>
           <span className="label-text" style={{ display: 'block', marginBottom: '1rem' }}>
             03 — SERVICIOS
@@ -78,10 +71,18 @@ export function Stage3Ascend() {
           </p>
         </div>
 
-        <ServicesCarousel selected={selected} onToggleSelect={toggleSelect} isMobile={isMobile} />
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 0.62fr',
+            gap: '2rem',
+            alignItems: 'start',
+          }}
+        >
+          <ServicesList selected={selected} onToggle={toggleSelect} />
+          <EscalasPanel selected={selectedServices} onRemove={toggleSelect} />
+        </div>
       </div>
-
-      <SelectedServicesBar sectionRef={sectionRef} selected={selectedServices} onRemove={toggleSelect} />
     </section>
   )
 }
