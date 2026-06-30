@@ -86,31 +86,6 @@ export function CabinServices() {
         overflow: 'hidden',
       }}
     >
-      {/* Cabin interior backdrop */}
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: 'url(/images/cabin-interior.webp)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center 42%',
-          opacity: 0.55,
-          filter: 'saturate(0.85) brightness(0.8)',
-          zIndex: 0,
-        }}
-      />
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'linear-gradient(180deg, rgba(5,5,5,0.5) 0%, rgba(5,5,5,0.78) 55%, rgba(5,5,5,0.92) 100%)',
-          zIndex: 0,
-        }}
-      />
-
       <div style={{ maxWidth: '900px', width: '100%', position: 'relative', zIndex: 1 }}>
         <span className="label-text" style={{ display: 'block', marginBottom: '6vh' }}>
           07 — CABIN
