@@ -61,36 +61,9 @@ export function Stage5Experience() {
         minHeight: '160vh',
         padding: '15vh 2rem',
         alignItems: 'flex-start',
-        position: 'relative',
-        overflow: 'hidden',
       }}
     >
-      {/* Cabin interior backdrop — we've just broken through the clouds */}
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: 'url(/images/cabin-interior.webp)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center 38%',
-          opacity: 0.5,
-          filter: 'saturate(0.8) brightness(0.78)',
-          zIndex: 0,
-        }}
-      />
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'linear-gradient(180deg, rgba(5,5,5,0.45) 0%, rgba(5,5,5,0.75) 55%, rgba(5,5,5,0.92) 100%)',
-          zIndex: 0,
-        }}
-      />
-
-      <div style={{ maxWidth: '900px', width: '100%', position: 'relative', zIndex: 1 }}>
+      <div style={{ maxWidth: '900px', width: '100%' }}>
         <span
           className="label-text"
           style={{ display: 'block', marginBottom: '2rem' }}
