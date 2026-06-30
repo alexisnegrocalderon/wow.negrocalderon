@@ -43,11 +43,13 @@ export const { cabinOpacity, veilOpacity } = makeCabinFade(
 )
 
 // Scroll-progress range where Section 3's cabin background is on screen.
-// Lines up with Stage3Ascend's slot in the STAGES array (see page.tsx): 0.17 -> 0.30.
-export const SECTION3_FADE_IN_START = 0.17
-export const SECTION3_FULL_START    = 0.20
-export const SECTION3_FULL_END      = 0.27
-export const SECTION3_FADE_OUT_END  = 0.30
+// Measured directly against rendered scroll position (not the STAGES array,
+// which doesn't account for Stage2TakeOff's GSAP pin adding extra scroll
+// distance): Section 3 is actually on screen from ~0.25 to ~0.39.
+export const SECTION3_FADE_IN_START = 0.25
+export const SECTION3_FULL_START    = 0.28
+export const SECTION3_FULL_END      = 0.36
+export const SECTION3_FADE_OUT_END  = 0.39
 
 export const section3CabinFade = makeCabinFade(
   SECTION3_FADE_IN_START,
